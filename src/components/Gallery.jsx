@@ -21,19 +21,19 @@ export class Gallery extends Component {
   };
 
   async componentDidUpdate(_, prevState) {
-    const { searchQuery } = this.state;
+    const { searchQuery, page } = this.state;
 
-    if (prevState.searchQuery !== searchQuery) {
+    if (prevState.searchQuery !== searchQuery || prevState.page !== page) {
       try {
         this.setState({ loading: true, error: null });
         const { hits, totalHits } = await fetchPhotosByQuery({
           q: searchQuery,
-          page: DEFAULT_PAGE_NUM,
+          page,
         });
         this.setState(prevState => ({
-          images: [...prevState.images, ...hits],
+          images:
+            page === DEFAULT_PAGE_NUM ? hits : [...prevState.images, ...hits],
           totalHits,
-          page: DEFAULT_PAGE_NUM,
         }));
       } catch (error) {
         this.setState({ error: error.message });
@@ -44,28 +44,11 @@ export class Gallery extends Component {
   }
 
   handleSetSearchQuery = text => {
-    this.setState({ searchQuery: text, images: [], page: 1 });
+    this.setState({ searchQuery: text, images: [], page: DEFAULT_PAGE_NUM });
   };
 
-  handleLoadMore = async () => {
-    const { searchQuery, page } = this.state;
-    const newPageNum = page + 1;
-
-    try {
-      this.setState({ loading: true, error: null });
-      const { hits } = await fetchPhotosByQuery({
-        q: searchQuery,
-        page: newPageNum,
-      });
-      this.setState(prevState => ({
-        images: [...prevState.images, ...hits],
-        page: newPageNum,
-      }));
-    } catch (error) {
-      this.setState({ error: error.message });
-    } finally {
-      this.setState({ loading: false });
-    }
+  handleLoadMore = () => {
+    this.setState(prevState => ({ page: prevState.page + 1 }));
   };
 
   handleClickImage = image => {
