@@ -1,16 +1,13 @@
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101'
-      }}
-    >
-      React homework template
-    </div>
-  );
-};
+import React from 'react';
+import { Gallery } from './Gallery';
+import '../styles.css';
+
+export class App extends React.Component {
+  render() {
+    return (
+      <div className="App">
+        <Gallery />
+      </div>
+    );
+  }
+}
